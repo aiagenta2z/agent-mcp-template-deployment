@@ -21,7 +21,8 @@ DeepNLP x AI Agent A2Z (aiagenta2z.com) provide public hosting service of AI Age
 #### Examples of demo projects deployed
 | Deployment Type          | Deployed SubDomain URL                              | Intro                                                                                                        |
 |--------------------------|-----------------------------------------------------|--------------------------------------------------------------------------------------------------------------|
-| Source Code              | https://jjjmc.aiagenta2z.com/perplexity_agent/mcp   | Perplexity API Deep Search Agent <br> [Github](https://github.com/jjjmc/perplexity_agent)                    |
+| Source Code Python       | https://jjjmc.aiagenta2z.com/perplexity_agent/mcp   | Perplexity API Deep Search Agent <br> [Github](https://github.com/jjjmc/perplexity_agent)                    |
+| Source Code Node         | https://derekzz.aiagenta2z.com/fortune-compass-agent/mcp   | Fortune Telling Agent ChatGPT Apps <br> [Github](https://github.com/AI-Hub-Admin/fortune-compass-agent)                   |
 | GitHub URL               | https://derek.aiagenta2z.com/solar-system_server_python/mcp | ChatGPT App with MCP ans Assets <br>  [ChatGPT Apps SDK](https://github.com/openai/openai-apps-sdk-examples) |
 | Template-Selling Product | -                                                   | -                                                                                                            |
 
