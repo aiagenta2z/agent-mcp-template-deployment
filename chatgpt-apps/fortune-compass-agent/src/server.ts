@@ -1,43 +1,32 @@
-import { createServer } from "node:http";
+import express, { Request, Response } from "express";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";
+import { z } from "zod";
 import { randomUUID } from "node:crypto";
+
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
-import {
-  CallToolRequestSchema,
-  ListResourcesRequestSchema,
-  ListToolsRequestSchema,
-  ReadResourceRequestSchema,
-  type CallToolRequest,
-  type ListResourcesRequest,
-  type ListToolsRequest,
-  type ReadResourceRequest,
-  type Resource,
-  type Tool,
-  isInitializeRequest,
-} from "@modelcontextprotocol/sdk/types.js";
-
-import { z } from "zod";
-
 import { drawFortune } from "./engine.js"; // your existing fortune logic
 
-/* ------------------------------------------------------------------ */
-/* MCP Server Setup */
-/* ------------------------------------------------------------------ */
+// Note: This Implemention Follows MCP 1.25 document add add express to host the /get /post method
 
+// Constants
+const MCP_SERVER_NAME = "fortune-compass";
+const WIDGET_NAME = "fortune-compass-widget";
+const DEBUG_ENABLE = false;
+
+const app = express();
+app.use(express.json());
+
+// Create MCP server once
 const server = new McpServer({
-  name: "fortune-compass",
-  version: "0.1.0",
+  name: MCP_SERVER_NAME,
+  version: "1.0.0",
 });
 
-const DEBUG_ENABLE = true;
-
-/* ------------------------------------------------------------------ */
-/* Paths & helpers */
-/* ------------------------------------------------------------------ */
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = path.resolve(__dirname, "..");
@@ -63,8 +52,9 @@ const widgetMeta = {
   "openai/widgetAccessible": true,
 } as const;
 
+// Resource
 server.resource(
-  "fortune-compass-widget",          // internal ID
+  WIDGET_NAME,          // internal ID
   WIDGET_URI,                        // resource URI (string)
   {
     description: "A specialized UI widget for fortune telling",
@@ -84,6 +74,7 @@ server.resource(
     };
   }
 );
+
 
 // Define your fortune tool
 server.registerTool(
@@ -119,69 +110,78 @@ server.registerTool(
   }
 );
 
-/* ------------------------------------------------------------------ */
-/* HTTP Server */
-/* ------------------------------------------------------------------ */
+
+
+// Store transports by session ID
+const sessions = new Map<string, StreamableHTTPServerTransport>();
+
+app.post("/mcp", async (req: Request, res: Response) => {
+  const sessionIdHeader = req.headers["mcp-session-id"] as string | undefined;
+  let transport: StreamableHTTPServerTransport;
+
+  // --- LOG HEADERS HERE ---
+  if (DEBUG_ENABLE) {
+      const reqId = randomUUID();
+      console.log("[mcp]---- MCP POST METHOD Headers ------ ", req.method, req.url);
+      console.log("\n[mcp:http] ===== Incoming Request =====");
+      console.log("[mcp:http] reqId:", reqId);
+      console.log("[mcp:http] method:", req.method);
+      console.log("[mcp:http] url:", req.url);
+      console.log("[mcp] Headers:");
+      for (const [key, value] of Object.entries(req.headers)) {
+            console.log(`  ${key}: ${value}`);
+      }
+  }
+
+  if (sessionIdHeader && sessions.has(sessionIdHeader)) {
+    // reuse
+    transport = sessions.get(sessionIdHeader)!;
+  } else if (!sessionIdHeader && isInitializeRequest(req.body)) {
+    // new session
+    transport = new StreamableHTTPServerTransport({
+      sessionIdGenerator: () => randomUUID(),
+      onsessioninitialized: (id) => {
+        sessions.set(id, transport);
+      }
+    });
+
+    // connect MCP
+    await server.connect(transport);
+  } else {
+    // bad
+    return res.status(400).json({ error: "Invalid session" });
+  }
+
+  // handle this MCP POST
+  await transport.handleRequest(req, res, req.body);
+});
+
+app.get("/mcp", async (req: Request, res: Response) => {
+  const sessionIdHeader = req.headers["mcp-session-id"] as string | undefined;
+  // --- LOG HEADERS HERE ---
+  if (DEBUG_ENABLE) {
+      const reqId = randomUUID();
+      console.log("[mcp]---- MCP POST METHOD Headers ------ ", req.method, req.url);
+      console.log("\n[mcp:http] ===== Incoming Request =====");
+      console.log("[mcp:http] reqId:", reqId);
+      console.log("[mcp:http] method:", req.method);
+      console.log("[mcp:http] url:", req.url);
+      console.log("[mcp] Headers:");
+      for (const [key, value] of Object.entries(req.headers)) {
+            console.log(`  ${key}: ${value}`);
+      }
+  }
+
+  if (!sessionIdHeader || !sessions.has(sessionIdHeader)) {
+    return res.status(400).json({ error: "Missing session" });
+  }
+  const transport = sessions.get(sessionIdHeader)!;
+  await transport.handleRequest(req, res);
+});
+
 const PORT = Number(process.env.PORT ?? 8000);
 
-// let initialized = false;
-
-let connected = false;
-
-
-const transport = new StreamableHTTPServerTransport({
-  sessionIdGenerator: () => randomUUID(),
-  onsessioninitialized: (sid) => {
-    console.log("[mcp] Session initialized:", sid);
-  },
-  onsessionclosed: (sid) => {
-    console.log("[mcp] Session closed:", sid);
-  },
+app.listen(PORT, () => {
+  console.log(`MCP server listening on http://localhost:${PORT}/mcp`);
 });
 
-// await server.connect(transport);
-await server.connect(transport);
-console.log("[mcp] MCP server connected");
-
-// mcp 1.25 server only initialze once
-
-createServer(async (req, res) => {
-  if (!req.url) {
-    res.writeHead(400).end();
-    return;
-  }
-
-  // Only handle /mcp path
-  if (req.url.startsWith("/mcp")) {
-    try {
-      // --- LOG HEADERS HERE ---
-      if (DEBUG_ENABLE) {
-          const reqId = randomUUID();
-          console.log("[mcp]---- MCP Headers ------ ", req.method, req.url);
-          console.log("\n[mcp:http] ===== Incoming Request =====");
-          console.log("[mcp:http] reqId:", reqId);
-          console.log("[mcp:http] method:", req.method);
-          console.log("[mcp:http] url:", req.url);
-          console.log("[mcp] Headers:");
-          for (const [key, value] of Object.entries(req.headers)) {
-            console.log(`  ${key}: ${value}`);
-          }
-      }
-
-      // The transport handles both POST (RPC)
-      // and GET (SSE/streamable) methods
-      await transport.handleRequest(req, res);
-    } catch (err) {
-      console.error("[mcp] transport error:", err);
-      if (!res.headersSent) {
-        res.writeHead(500).end("MCP transport error");
-      }
-    }
-    return;
-  }
-
-  // Any other route 404s
-  res.writeHead(404).end("Not found");
-}).listen(PORT, () => {
-  console.log(`Fortune Compass MCP server running at http://localhost:${PORT}/mcp`);
-});
