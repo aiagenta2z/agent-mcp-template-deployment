@@ -14,34 +14,29 @@ DeepNLP x AI Agent A2Z (aiagenta2z.com) provide public hosting service of AI Age
 
 1. Various Deployment methods: template, github_repo, and source code
 2. GitHub/Source Code: Support both Python/Typescript, which is just like how you start your Agent locally, you can deploy in our cloud container and save money of without the heavy cost of renting a cloud server or get a domain name by yourself.
-3. Templates: We provides 20+ templates in various business models, such as `selling product` and `digital resources` e-commerce products agent/mcps as resources, vendors and content creators can expose their physical goods, digital resources (documents,files,online courses) etc to ChatGPT/Cursor. 
+3. Templates: We provides 20+ templates in various business models, such as `selling product` and `digital resources` e-commerce products agent/mcps as resources, vendors and content creators can expose their physical goods, digital resources (documents,files,online courses) etc to ChatGPT/Cursor.
 4. SubDomain URL: Each user can have a unique subdomain URL for your agents, able to verification and hosting services.
 5. Domain Verification: We support subdomain verification for various platforms, such as OpenAI, WeCom, WeChat, DingTalk, etc.
 6. API Monitor and Credit Rewards: You can visit the [Deployed Agent API Dashboard](https://deepnlp.org/workspace/api_dashboard) to see the metric of your Deploy Agent & MCP and [Billing Credits](https://deepnlp.org/workspace/billing) earned.
 
 
 #### Examples of demo projects deployed
-| Deployment Type          | Deployed SubDomain URL                                        | Intro                                                                                                        |
-|--------------------------|---------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------|
-| Source Code Python       | https://jjjmc.aiagenta2z.com/perplexity_agent/mcp             | Perplexity API Deep Search Agent <br> [Github](https://github.com/jjjmc/perplexity_agent)                    |
-| Source Code Node         | https://derekzz.aiagenta2z.com/fortune-compass-agent/mcp      | Fortune Telling Agent ChatGPT Apps <br> [Github](https://github.com/AI-Hub-Admin/fortune-compass-agent)                   |
-| GitHub URL               | https://derekzz.aiagenta2z.com/solar-system_server_python/mcp | ChatGPT App with MCP ans Assets <br>  [ChatGPT Apps SDK](https://github.com/openai/openai-apps-sdk-examples) |
-| Template-Selling Product | -                                                             | -                                                                                                            |
+| Deployment Type          | Deployed SubDomain URL                              | Intro                                                                                                                                       |
+|--------------------------|-----------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
+| Source Code              | https://jjjmc.aiagenta2z.com/perplexity_agent/mcp   | Perplexity API Deep Search Agent <br> [Github](https://github.com/jjjmc/perplexity_agent)                                                   |
+| GitHub                   | https://derek.aiagenta2z.com/solar-system_server_python/mcp | ChatGPT App with MCP ans Assets <br>  [ChatGPT Apps SDK](https://github.com/openai/openai-apps-sdk-examples)                                |
+| GitHub                   | https://agentscope.aiagenta2z.com/deep_research_agent/chat  | AgentScope, Qwen3 + Tavily Live Chat Endpoint and expose chat [Playground](https://agent.deepnlp.org/?agent=agentscope/deep_research_agent) |
+| Template-Selling Product | -                                                   | -                                                                                                                                           |
 
 
-
-### Support Packages
-| Deployment Type   | Intro                                                                                            |
-|-------------------|--------------------------------------------------------------------------------------------------|
-| Support Agent SDK | [langchain](https://www.langchain.com/agents) | [agentscope](https://doc.agentscope.io/tutorial/) |
-
-
-
-
+### Support SDK and Packages
+| Deployment Type   | Intro                                                                                           |
+|-------------------|-------------------------------------------------------------------------------------------------|
+| Support Agent SDK | [langchain](https://www.langchain.com/agents) [agentscope](https://doc.agentscope.io/tutorial/) |
 
 ## Quickstart
 
-### 1. Deploy From Source Code
+### Deploy From Source Code
 
 #### User Case - Hosting a Perplexity Deep Research Agent MCP
 <img src="https://raw.githubusercontent.com/aiagenta2z/agent_mcp_deployment/refs/heads/main/docs/agent_mcp_deployment_panel.png" style="height:400px;" alt="AI Agent Marketplace Category">
@@ -89,7 +84,7 @@ Click deploy button and please wait a while for the deployment to complete and y
 MCP SERVER URL: `https://jjjmc.aiagenta2z.com/perplexity_agent/mcp `
 
 
-### 2. Deploy From GitHub Repo
+### Deploy From GitHub Repo
 
 <img src="https://raw.githubusercontent.com/aiagenta2z/agent_mcp_deployment/refs/heads/main/docs/agent_deployment_github.jpg" style="height:400px;" alt="AI Agent Marketplace Category">
 
@@ -129,6 +124,14 @@ pnpm run serve &
 uvicorn solar-system_server_python.main:app
 ```
 
+or another app "kitchen-sink-mcp-node"
+
+```angular2html
+pnpm run build
+pnpm run serve &
+pnpm --filter kitchen-sink-mcp-node start
+```
+
 `Environment Variables`: If Applicable
 
 Step 3. Deploy
@@ -149,17 +152,69 @@ Copy and Paste into your Client
 }
 ```
 
-### 3. Deploy From Template (Beta)
+#### AgentScope Chat Example
+
+Example GitHub: https://github.com/aiagenta2z/agent-mcp-deployment-templates
+
+We will implement and deploy a agentscope based deep-research agent, converting the original [deep research example](https://github.com/agentscope-ai/agentscope/tree/main/examples/agent/deep_research_agent) to
+an FastAPI Server and expose the "/chat" API endpoint so that users can call the deep research agent by parameters `messages` and 
+get the deep research reports
+
+| Item          | Description                                               |
+|---------------|-----------------------------------------------------------|
+| unique id | agentscope/deep_research_agent                       |
+| Live Chat URL | https://agentscope.aiagenta2z.com/deep_research_agent/chat |
+| Playground | https://agent.deepnlp.org/?agent=agentscope/deep_research_agent |
+
+
+You can also use the Agent Router playground (WebUI) to start chatting with your live agents.
+Visit the URL https://agent.deepnlp.org/?agent=${unique_id}. Note that the returned streaming chunks
+should follow specific formats to work with the Agent Router Web UI. See [Doc](https://github.com/aiagenta2z/agent-mcp-deployment-templates/blob/main/agentscope/deep_research_agent/main_server.py) #assembly_message function for more details
+
+Step 1: Choose Deploy From Tab GitHub Source
+Step 2: Choose Public URL: https://github.com/aiagenta2z/agent-mcp-deployment-templates/tree/main/agentscope
+Step 3: Entry Point
+
+```
+uvicorn main_server:app
+```
+
+The main server python will expose http://localhost:8000/chat endpoint in the container
+
+Step 4: Add Environment Variable
+
+The examples take two examples key as input for demo to run.
+```bash
+DASHSCOPE_API_KEY=xxxxx
+TAVILY_API_KEY=xxxxx
+```
+
+Test the results locally before deploying live
+
+```
+curl -X POST "http://localhost:8000/chat" \
+-H "Content-Type: application/json" \
+-d '{"messages":[{"role":"user","content":"What is difference between MCPs and skills?"}]}'
+
+```
+Deep Research Results
+``` 
+{"type": "assistant", "format": "text", "content": "{\n  \"type\": \"text\",\n  \"text\": \"Create and write ./agentscope/examples/agent/deep_research_agent/deepresearch_agent_demo_env/Friday260209165138_detailed_report.md successfully.\"\n}", "section": "answer", "message_id": "5d878be8-82df-4c23-8fa6-564bf745775b", "content_type": "text/markdown", "template": "streaming_content_type", "task_ids": "", "tab_message_ids": "", "tab_id": ""}
+```
+
+Step 5: Click 'Deploy'
+Then you can just wait for the server to finish and check the urls after it's ready.
+
+
+### Deploy From Template (Beta)
 
 #### Use Case 1 Selling products
 
 
 
+### Domain Verification
 
-
-### 4. Domain Verification
-
-The AI Agent A2Z Agent & MCP platform provides subdomain verification services to help you submit your deploy agents 
+The AI Agent A2Z Agent & MCP platform provides subdomain verification services to help you submit your deploy agents
 to various Apps Store and verify that you own the domains, such as ChatGPT App Store, MCP Official Registry, WeCom (Tencent), WeChat, DingTalk, etc.
 
 Go to Deployment -> Deployment Configuration -> Domain Verification tab
@@ -180,8 +235,8 @@ Switch the tab, fill in the filename and content value, the just one click "Veri
 #### ChatGPT App Submission and Domain Verification
 
 On the ChatGPT App Manage Page (https://platform.openai.com/apps-manage), you can submit your AI Agent by filling the form.
-You need to prepare a MCP Server URL (e.g. https://derekzz.aiagenta2z.com/fortune-compass-agent/mcp) and copy and paste the 
-verification code under the file path (https://derekzz.aiagenta2z.com/.well-known/openai-apps-challenge). 
+You need to prepare a MCP Server URL (e.g. https://derekzz.aiagenta2z.com/fortune-compass-agent/mcp) and copy and paste the
+verification code under the file path (https://derekzz.aiagenta2z.com/.well-known/openai-apps-challenge).
 
 <img src="https://raw.githubusercontent.com/aiagenta2z/ai-agent-marketplace/refs/heads/main/docs/domain_verification_before.png" style="height:400px;" alt="AI Agent Marketplace Category">
 
@@ -204,10 +259,6 @@ Visit the [Billing Credits](https://deepnlp.org/workspace/billing) for detail re
 
 
 
-## Q&A Trouble Shooting
-### Please raise issue on our github if you need assistance: 
-[GitHub Agent MCP Deployment](https://github.com/aiagenta2z/ai-agent-marketplace)
-
 
 ### Related
 
@@ -226,6 +277,7 @@ Visit the [Billing Credits](https://deepnlp.org/workspace/billing) for detail re
 [AI Agent Dataset](https://www.deepnlp.org/store/dataset)     
 
 [Gemini Nano Banana Agent](https://agent.deepnlp.org/agent/mcp_tool_use?server=aiagenta2z%2Fgemini_mcp_onekey)     
+
 
 
 
