@@ -11,13 +11,13 @@ from copy import deepcopy
 import shortuuid
 from pydantic import BaseModel
 
-from built_in_prompt.promptmodule import (
+from .built_in_prompt.promptmodule import (
     SubtasksDecomposition,
     WebExtraction,
     FollowupJudge,
     ReflectFailure,
 )
-from utils import (
+from .utils import (
     truncate_search_result,
     load_prompt_dict,
     get_dynamic_tool_call_json,
