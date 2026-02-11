@@ -933,6 +933,14 @@ class DeepResearchAgent(ReActAgent):
             params=params,
         )
 
+        ## append conten to tool res message
+        try:
+            res_text = write_report_tool_res_msg.content[0]["output"][0]["text"]
+            res_text = res_text + "\n" + final_report_content
+            write_report_tool_res_msg.content[0]["output"][0]["text"] = res_text
+        except Exception as e:
+            print (f"Failed to parse tool result function {e}")
+
         return write_report_tool_res_msg, detailed_report_path
 
     async def _summarizing(self) -> Msg:
@@ -941,10 +949,12 @@ class DeepResearchAgent(ReActAgent):
 
         (
             summarized_content,
-            _,
+            _
         ) = await self._generate_deepresearch_report(
             checklist=self.current_subtask[0].knowledge_gaps,
         )
+        print (f"DEBUG: summarized_content {summarized_content}")
+
         return Msg(
             name=self.name,
             role="assistant",
@@ -1085,10 +1095,11 @@ class DeepResearchAgent(ReActAgent):
         if len(self.current_subtask) == 0:
             (
                 summarized_content,
-                _,
+                _
             ) = await self._generate_deepresearch_report(
                 checklist=checklist,
             )
+
             response_msg = Msg(
                 name=self.name,
                 role="assistant",

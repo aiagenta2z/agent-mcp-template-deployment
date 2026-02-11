@@ -3,6 +3,7 @@
 import asyncio
 import os
 
+
 from .deep_research_agent import DeepResearchAgent
 
 from agentscope import logger
@@ -75,6 +76,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from contextlib import asynccontextmanager
 from fastapi.responses import StreamingResponse
+import uuid
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -188,22 +190,27 @@ async def stream_generator(agent, msg):
     TEMPLATE_REASONING_HTML = "reason_html"
     TEMPLATE_STREAMING_CONTENT_TYPE = "streaming_content_type"
     """
-    ## result is a message class Msg
-    response_msg = await agent.reply(msg)
-    print (f"Agent Reply: response {response}")
-    response_content = response_msg.content
-    print (f"Agent Reply: response response_content {response_content}")
-
     message_type = "assistant"
     output_format = "text"
     content_type = "text/markdown"
     section = "answer"
-    output_message_id = response_msg.id
-    TEMPLATE_STREAMING_CONTENT_TYPE = "streaming_content_type"
-    content_type_chunk = json.dumps(assembly_message(message_type, output_format, response_content, content_type=content_type, section=section, message_id=output_message_id, template=TEMPLATE_STREAMING_CONTENT_TYPE) )
-    
     streaming_separator = "\n"
-    print (f"stream_generator response Result: {response}")
+    TEMPLATE_STREAMING_CONTENT_TYPE = "streaming_content_type"
+
+    ## Initial Chunk
+    initial_chunk = json.dumps(assembly_message(message_type, output_format, "DeepResearch Task Starting...", content_type=content_type, section=section, message_id= str(uuid.uuid4()), template=TEMPLATE_STREAMING_CONTENT_TYPE) )
+    yield initial_chunk + streaming_separator
+
+    ## result is a message class Msg
+    response_msg = await agent.reply(msg)
+    print (f"Agent Reply: response {response_msg}")
+    response_content = response_msg.content
+    print (f"Agent Reply: response response_content {response_content}")
+
+    output_message_id = response_msg.id
+    content_type_chunk = json.dumps(assembly_message(message_type, output_format, response_content, content_type=content_type, section=section, message_id=output_message_id, template=TEMPLATE_STREAMING_CONTENT_TYPE) )
+
+    print (f"stream_generator response Result: {response_msg}")
     yield content_type_chunk + streaming_separator
 
 def assembly_message(type, format, content, **kwargs):
