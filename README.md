@@ -39,7 +39,7 @@ DeepNLP x AI Agent A2Z (aiagenta2z.com) provide public hosting service of AI Age
 ### Deploy From Source Code
 
 #### User Case - Hosting a Perplexity Deep Research Agent MCP
-<img src="https://raw.githubusercontent.com/aiagenta2z/agent_mcp_deployment/refs/heads/main/docs/agent_mcp_deployment_panel.png" style="height:400px;" alt="AI Agent Marketplace Category">
+<img src="https://raw.githubusercontent.com/aiagenta2z/agent-mcp-deployment-templates/refs/heads/main/docs/agent_mcp_deployment_panel.png" style="height:400px;" alt="AI Agent Marketplace Category">
 
 Lets' say you want to implement a Google Customized Search API based MCP server and
 want to expose a tool  `perplexity_research_agent(messages: List[Dict[str, str]])` `perplexity_search_agent(question: str)` for users to use.
@@ -86,7 +86,7 @@ MCP SERVER URL: `https://jjjmc.aiagenta2z.com/perplexity_agent/mcp `
 
 ### Deploy From GitHub Repo
 
-<img src="https://raw.githubusercontent.com/aiagenta2z/agent_mcp_deployment/refs/heads/main/docs/agent_deployment_github.jpg" style="height:400px;" alt="AI Agent Marketplace Category">
+<img src="https://raw.githubusercontent.com/aiagenta2z/agent-mcp-deployment-templates/refs/heads/main/docs/agent_deployment_github.jpg" style="height:400px;" alt="AI Agent Marketplace Category">
 
 Deployment from Github Repo is as easy as you `git clone` project from web start the mcp/agent server locally. 
 Imagine you are tenants on a shared hosting cloud service, and you just need to prepare a multi-line `entry_point.sh` shell script to let us know how you want to run the server.
@@ -152,64 +152,30 @@ Copy and Paste into your Client
 }
 ```
 
-#### AgentScope Chat Example
+#### AgentScope Example-DeepResearch Agent
 
-Example GitHub: https://github.com/aiagenta2z/agent-mcp-deployment-templates
+Example GitHub: https://github.com/aiagenta2z/agent-mcp-deployment-templates/agentscope_examples/deep_research_agent
 
 We will implement and deploy a agentscope based deep-research agent, converting the original [deep research example](https://github.com/agentscope-ai/agentscope/tree/main/examples/agent/deep_research_agent) to
 an FastAPI Server and expose the "/chat" API endpoint so that users can call the deep research agent by parameters `messages` and 
 get the deep research reports
 
-| Item          | Description                                               |
-|---------------|-----------------------------------------------------------|
-| unique id | agentscope/deep_research_agent                       |
-| Live Chat URL | https://agentscope.aiagenta2z.com/deep_research_agent/chat |
-| Playground | https://agent.deepnlp.org/?agent=agentscope/deep_research_agent |
+| Item                     | Description                                               |
+|--------------------------|-----------------------------------------------------------|
+| unique id                | agentscope/deep_research_agent                       |
+| Live Chat URL(POST Only) | https://agentscope.aiagenta2z.com/deep_research_agent/chat |
+| Playground               | https://agent.deepnlp.org/?agent=agentscope/deep_research_agent |
 
 
 You can also use the Agent Router playground (WebUI) to start chatting with your live agents.
 Visit the URL https://agent.deepnlp.org/?agent=${unique_id}. Note that the returned streaming chunks
 should follow specific formats to work with the Agent Router Web UI. See [Doc](https://github.com/aiagenta2z/agent-mcp-deployment-templates/blob/main/agentscope/deep_research_agent/main_server.py) #assembly_message function for more details
 
-Step 1: Choose Deploy From Tab GitHub Source
-Step 2: Choose Public URL: https://github.com/aiagenta2z/agent-mcp-deployment-templates/tree/main/agentscope
-Step 3: Entry Point
-
-```
-uvicorn main_server:app
-```
-
-The main server python will expose http://localhost:8000/chat endpoint in the container
-
-Step 4: Add Environment Variable
-
-The examples take two examples key as input for demo to run.
-```bash
-DASHSCOPE_API_KEY=xxxxx
-TAVILY_API_KEY=xxxxx
-```
-
-Test the results locally before deploying live
-
-```
-curl -X POST "http://localhost:8000/chat" \
--H "Content-Type: application/json" \
--d '{"messages":[{"role":"user","content":"What is difference between MCPs and skills?"}]}'
-
-```
-Deep Research Results
-``` 
-{"type": "assistant", "format": "text", "content": "{\n  \"type\": \"text\",\n  \"text\": \"Create and write ./agentscope/examples/agent/deep_research_agent/deepresearch_agent_demo_env/Friday260209165138_detailed_report.md successfully.\"\n}", "section": "answer", "message_id": "5d878be8-82df-4c23-8fa6-564bf745775b", "content_type": "text/markdown", "template": "streaming_content_type", "task_ids": "", "tab_message_ids": "", "tab_id": ""}
-```
-
-Step 5: Click 'Deploy'
-Then you can just wait for the server to finish and check the urls after it's ready.
-
+See agentscope_examples [README.md](https://github.com/aiagenta2z/agent-mcp-deployment-templates/blob/main/agentscope_examples/deep_research_agent/README.md) for more details.
 
 ### Deploy From Template (Beta)
 
 #### Use Case 1 Selling products
-
 
 
 ### Domain Verification
