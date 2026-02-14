@@ -30,7 +30,20 @@ app = runtime.app
 ```
 
 
-### Run the Server
+### Deploy the Server
+
+Step 1. Choose Github Tab
+
+Step 2. Public url: https://github.com/aiagenta2z/agent-mcp-deployment-templates
+
+Step 3. 
+Entry Point Command shell
+
+```
+uvicorn langchain_deepagents.deep_research.research_agent_server:app
+```
+
+Step 4.
 
 Set the Environment Variables
 ```bash
@@ -39,11 +52,20 @@ export GOOGLE_API_KEY="..."      # For image generation
 export TAVILY_API_KEY="..."      # For web search (optional)
 ```
 
-Entry Point Command shell
+Step 5. Click Deploy and You will get the URL
 
+<img src="https://raw.githubusercontent.com/aiagenta2z/agent-mcp-deployment-templates/refs/heads/main/docs/langchain_content_builder_deployment.png" style="height:400px;" alt="Deployment of LangChain Content">
+
+Get the Product /chat POST URL :
+
+``` 
+https://langchain-ai.aiagenta2z.com/content-builder-agent/chat
 ```
-uvicorn content_writer_server:app
-```
+
+And you can see the running 
+
+<img src="https://raw.githubusercontent.com/aiagenta2z/agent-mcp-deployment-templates/refs/heads/main/docs/langchain_writing_blogs.png" style="height:400px;" alt="Deployment of LangChain Content">
+
 
 ## 🚀 Architecture Summary
 

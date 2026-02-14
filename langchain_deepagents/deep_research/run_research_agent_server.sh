@@ -25,6 +25,8 @@ Result
 
 2. Case 2: research context engineering approaches used to build AI agents
 
+
+
 curl -X POST "http://localhost:8000/chat" \
   -H "Content-Type: application/json" \
   -d '{"messages":[{"role":"user","content":"research context engineering approaches used to build AI agents"}]}'

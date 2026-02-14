@@ -40,7 +40,7 @@ export TAVILY_API_KEY="..."      # For web search (optional)
 Entry Point Command shell
 
 ```
-uvicorn research_agent_server:app
+uvicorn langchain_deepagents.deep_research.research_agent_server:app
 ```
 
 
@@ -149,11 +149,38 @@ You now have a production-ready FastAPI service.
 
 ---
 
-## 4️⃣ Start the Server
 
-```bash
-uvicorn research_agent_server:app
+### Deploy the Server
+
+Step 1. Choose Github Tab
+Step 2. Public url: https://github.com/aiagenta2z/agent-mcp-deployment-templates
+Step 3. 
+Entry Point Command shell
+
+```commandline
+uvicorn langchain_deepagents.deep_research.research_agent_server:app
 ```
+
+
+Step 4.
+
+Set the Environment Variables
+```bash
+# Set API keys
+export GOOGLE_API_KEY="..."      # For image generation
+export TAVILY_API_KEY="..."      # For web search (optional)
+```
+
+Step 5. Click Deploy and You will get the URL
+
+<img src="https://raw.githubusercontent.com/aiagenta2z/agent-mcp-deployment-templates/refs/heads/main/docs/langchain_content_builder_deployment.png" style="height:400px;" alt="Deployment of LangChain Content">
+
+Get the Product /chat POST URL :
+
+```
+https://langchain-ai.aiagenta2z.com/deep_research/chat
+```
+
 
 Server will run at:
 
